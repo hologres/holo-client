@@ -139,8 +139,7 @@ catch(HoloClientException e){
 ### HoloConfig参数说明
 | 参数名 | 默认值 | 说明 |
 | --- | --- | --- |
-| jdbcUrl | 无 | 必填
- |
+| jdbcUrl | 无 | 必填|
 | username | 无 | 必填 |
 | password | 无 | 必填 |
 | dynamicPartition | false | 若为true，当分区不存在时自动创建分区 |
