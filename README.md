@@ -20,16 +20,16 @@ holo-client依赖特殊的pgjdbc版本，请确认项目中没有依赖org.postg
 <dependency>
   <groupId>com.alibaba.hologres</groupId>
   <artifactId>holo-client</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
 </dependency>
 ```
 
 - Gradle
 ```
-implementation 'com.alibaba.hologres:holo-client:1.2.4'
+implementation 'com.alibaba.hologres:holo-client:1.2.5'
 ```
-## 数据写入
-holo-client写入是线程安全的，建议在项目中采用单例的方式使用。可通过参数writeThreadSize来调节吞吐量
+## 数据读写
+建议项目中创建HoloClient单例，通过writeThreadSize和readThreadSize控制读写的并发（每并发占用1个JDBC连接，空闲超过connectionMaxIdleMs将被自动回收)
 ### 写入普通表
 ```java
 // 配置参数,url格式为 jdbc:postgresql://host:port/db
@@ -48,7 +48,7 @@ try (HoloClient client = new HoloClient(config)) {
     put.setObject("address", "address0");
     client.put(put); 
     ...
-    client.flush(); //强制提交所有未提交put请求；当未提交put请求满足WriteBatchSize或WriteBatchByteSize也会自动提交
+    client.flush(); //强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
 catch(HoloClientException e){
 }
 ```
@@ -76,7 +76,7 @@ try (HoloClient client = new HoloClient(config)) {
     put.setObject("name", "name0");
     client.put(put); 
     ...
-    client.flush(); //强制提交所有未提交put请求；当未提交put请求满足WriteBatchSize或WriteBatchByteSize也会自动提交
+    client.flush(); //强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
 catch(HoloClientException e){
 }
 ```
@@ -108,13 +108,12 @@ try (HoloClient client = new HoloClient(config)) {
     put.setObject(2, "newAddress");
     client.put(put);
     ...
-    client.flush();//强制提交所有未提交put请求；当未提交put请求量满足WriteBatchSize或WriteBatchByteSize也会自动提交
+    client.flush();//强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
 catch(HoloClientException e){
 }
 ```
-## 数据查询
-holo-client查询是线程安全的，可根据实际吞吐需求，创建多个HoloClient对象
 ### 基于完整主键查询
+HoloClient目前仅支持基于全主键的查询，后续会增加对其他场景的支持
 ```java
 // 配置参数,url格式为 jdbc:postgresql://host:port/db
 HoloConfig config = new HoloConfig();
@@ -134,7 +133,6 @@ catch(HoloClientException e){
     
 ```
 
-
 ## 附录
 ### HoloConfig参数说明
 | 参数名 | 默认值 | 说明 |引入版本|
@@ -145,11 +143,13 @@ catch(HoloClientException e){
 | dynamicPartition | false | 若为true，当分区不存在时自动创建分区 | 1.2.3 |
 | writeMode | INSERT_OR_REPLACE | 当INSERT目标表为有主键的表时采用不同策略<br>INSERT_OR_IGNORE 当主键冲突时，不写入<br>INSERT_OR_UPDATE 当主键冲突时，更新相应列<br>INSERT_OR_REPLACE当主键冲突时，更新所有列| 1.2.3|
 | writeBatchSize | 512 | 每个写入线程的最大批次大小，在经过WriteMode合并后的Put数量达到writeBatchSize时进行一次批量提交 | 1.2.3 |
-| writeBufferSize | 640 ｜ 每个写入线程的请求缓冲队列大小 | 1.2.4 |
+| writeBufferSize | 640 | 每个写入线程的请求缓冲队列大小 | 1.2.4 |
 | writeBatchByteSize | 2MB | 每个写入现成的最大批次bytes大小，在经过WriteMode合并后的Put数据字节数达到writeBatchByteSize时进行一次批量提交 | 1.2.3|
 | writeMaxIntervalMs | 10000 ms | 距离上次提交超过writeMaxIntervalMs会触发一次批量提交 | 1.2.4 |
 | writeFailStrategy | TYR_ONE_BY_ONE | 当某一批次提交失败时，会将批次内的记录逐条提交（保序），单条提交失败的记录将会跟随异常HoloClientWithDatailsException被抛出| 1.2.4|
 | writeThreadSize | 1 | 写入并发线程数（每个并发占用1个数据库连接） | 1.2.4 |
+| inputNumberAsEpochMsForDatetimeColumn | false | 当Number写入Date/timestamp/timestamptz列时，若为true，将number视作ApochMs   | 1.2.5 |
+| flushMaxWaitMs | 60000 ms | flush操作的最长等待时间  | 1.2.5 |
 | readThreadSize | 1 | 点查并发线程数（每个并发占用1个数据库连接）| 1.2.4|
 | readBatchSize | 128 | 点查最大批次大小 | 1.2.3|
 | readBatchQueueSize | 256 | 点查请求缓冲队列大小| 1.2.4|
