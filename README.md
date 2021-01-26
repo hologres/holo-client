@@ -133,6 +133,14 @@ catch(HoloClientException e){
     
 ```
 
+## RELEASE NOTE
+### 1.2.5
+- 修复类型为update/delete Put在多主键下无法提交的bug
+- 修复主键包含特殊字符或大小写敏感时，Get请求失败的bug
+- 修复在高并发下出现数据写入失败时（连接故障或数据不合法），flush操作会阻塞60s的bug
+- Put请求在提交时支持自动字段类型转换，包括（String->int/int8/numeric/float/timestamptz等）
+
+
 ## 附录
 ### HoloConfig参数说明
 | 参数名 | 默认值 | 说明 |引入版本|
