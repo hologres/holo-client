@@ -111,6 +111,7 @@ try (HoloClient client = new HoloClient(config)) {
     client.flush();//强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
 catch(HoloClientException e){
 }
+```
 
 ### 基于主键删除（DELETE占比提高会降低整体的每秒写入）
 ```java
