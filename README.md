@@ -111,6 +111,32 @@ try (HoloClient client = new HoloClient(config)) {
     client.flush();//强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
 catch(HoloClientException e){
 }
+
+### 基于主键删除（DELETE占比提高会降低整体的每秒写入）
+```java
+// 配置参数,url格式为 jdbc:postgresql://host:port/db
+HoloConfig config = new HoloConfig();
+config.setJdbcUrl(url);
+config.setUsername(username);
+config.setPassword(password);
+
+config.setWriteBatchByteSize(10*1024*1024L);
+config.setWriteBatchSize(1024);
+
+config.setWriteMode(WriteMode.INSERT_OR_REPLACE);//配置主键冲突时策略
+
+try (HoloClient client = new HoloClient(config)) {
+    //create table t0(id int not null,name0 text,address text,primary key(id))
+    TableSchema schema0 = client.getTableSchema("t0");
+    Put put = new Put(schema0);
+    put.getRecord().setType(SqlCommandType.DELETE);
+    put.setObject("id", 1);
+    client.put(put); 
+    ...
+    client.flush();//强制提交所有未提交put请求；HoloClient内部也会根据WriteBatchSize、WriteBatchByteSize、writeMaxIntervalMs三个参数自动提交
+catch(HoloClientException e){
+}
+
 ```
 ### 基于完整主键查询
 HoloClient目前仅支持基于全主键的查询，后续会增加对其他场景的支持
