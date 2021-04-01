@@ -279,4 +279,4 @@ catch(HoloClientException e){
 | retrySleepStepMs | 10*1000 ms | 每次重试的等待时间=retrySleepInitMs+retry*retrySleepStepMs |1.2.3 |
 | connectionMaxIdleMs| 60000 ms | 写入线程和点查线程数据库连接的最大Idle时间，超过连接将被释放| 1.2.4 |
 | metaCacheTTL | 1 min | getTableSchema信息的本地缓存时间 | 1.2.6 |
-| metaAutoRefreshFactor | 4 | 当tableSchema cache时间超过 metaCacheTTL/metaAutoRefreshFactor 将自动刷新cache | 1.2.10.1 |
+| metaAutoRefreshFactor | 4 | 当tableSchema cache剩余存活时间短于 metaCacheTTL/metaAutoRefreshFactor 将自动刷新cache | 1.2.10.1 |
