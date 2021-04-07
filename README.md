@@ -254,7 +254,7 @@ catch(HoloClientException e){
 ```
 
 ## 已知问题
-- INSERT_OR_IGNORE和INSERT_OR_UPDATE模式下，insert和delete不保序  bug引入版本1.2.8，bug修复版本1.2.10.2
+- INSERT_OR_IGNORE和INSERT_OR_UPDATE模式下，insert和delete不保序  bug引入版本1.2.8，bug修复版本1.2.10.3
 
 ## 附录
 ### HoloConfig参数说明
