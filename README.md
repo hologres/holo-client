@@ -13,6 +13,7 @@
     - [Scan查询](#scan查询)
   - [异常处理](#异常处理)
   - [自定义操作](#自定义操作)
+  - [已知问题](#已知问题)
   - [附录](#附录)
     - [HoloConfig参数说明](#holoconfig参数说明)
       - [基础配置](#基础配置)
@@ -38,13 +39,13 @@ select count(*) from pg_stat_activity where backend_type='client backend';
 <dependency>
   <groupId>com.alibaba.hologres</groupId>
   <artifactId>holo-client</artifactId>
-  <version>1.2.10.2</version>
+  <version>1.2.10.3</version>
 </dependency>
 ```
 
 - Gradle
 ```
-implementation 'com.alibaba.hologres:holo-client:1.2.10.2'
+implementation 'com.alibaba.hologres:holo-client:1.2.10.3'
 ```
 
 ## 连接数说明
@@ -174,7 +175,6 @@ catch(HoloClientException e){
 
 ### Scan查询
 ```sql
-create table t0 (id int not null,name text not null,address text,primary key(id,name));
 ```
 ```java
 // 配置参数,url格式为 jdbc:postgresql://host:port/db
@@ -252,6 +252,9 @@ try (HoloClient client = new HoloClient(config)) {
 catch(HoloClientException e){
 }
 ```
+
+## 已知问题
+- INSERT_OR_IGNORE和INSERT_OR_UPDATE模式下，insert和delete不保序  bug引入版本1.2.8，bug修复版本1.2.10.2
 
 ## 附录
 ### HoloConfig参数说明
