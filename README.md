@@ -39,13 +39,13 @@ select count(*) from pg_stat_activity where backend_type='client backend';
 <dependency>
   <groupId>com.alibaba.hologres</groupId>
   <artifactId>holo-client</artifactId>
-  <version>1.2.13.4</version>
+  <version>1.2.13.5</version>
 </dependency>
 ```
 
 - Gradle
 ```
-implementation 'com.alibaba.hologres:holo-client:1.2.13.4'
+implementation 'com.alibaba.hologres:holo-client:1.2.13.5'
 ```
 
 ## 连接数说明
@@ -164,7 +164,7 @@ try (HoloClient client = new HoloClient(config)) {
     //create table t0(id int not null,name0 text,address text,primary key(id))
     TableSchema schema0 = client.getTableSchema("t0");
     
-    Get get = Get.newBuilder(schema).setPrimaryKey("id", 0).build(); // where id=1;
+    Get get = Get.newBuilder(schema).setPrimaryKey("id", 0).build(); // where id=0;
     client.get(get).thenAcceptAsync((record)->{
         // do something after get result
     });
